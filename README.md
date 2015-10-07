@@ -2,7 +2,18 @@
 
 Make continuous deployment safe by comparing before and after webpage screenshots for each release. Depicted shows when any visual, perceptual differences are found. This is the ultimate, automated end-to-end test.
 
-**[View the test instance here](https://dpxdt-test.appspot.com)**
+To run the dockerized container, you'll need to start 2 containers, a MySql container and the Dpxdt container
+- Start the MySql container
+    - docker run --name dpxdt_db -v `pwd`/dpxdt_data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=dpxdt -e MYSQL_USER=dpxdt -e MYSQL_PASSWORD=password -d mysql:5.7.7
+- Create all the tables that Dpxdt needs
+    - docker run --link dpxdt_db:dpxdt_db --entrypoint /usr/local/dpxdt/db/initdb.sh fss/dpxdt
+- Start Dpxdt on port 5000
+    - docker run -d --link dpxdt_db:dpxdt_db -p 5000:5000 fss/dpxdt
+
+This will cause MySql to store data in your current directory/dpxdt_data.  If you stop the MySql container and start a new one that is pointing to an already existing data directory, 
+the environment flags will just be ignored and existing data will be used for the container.
+
+**[View the test instance here](https://localhost:5000)**
 
 Depicted is:
 
