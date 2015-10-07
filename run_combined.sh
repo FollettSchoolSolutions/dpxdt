@@ -12,5 +12,4 @@
     --reload_code \
     --port=5000 \
     --verbose \
-    --ignore_auth \
     $@
