@@ -23,7 +23,7 @@ import hashlib
 import os
 import uuid
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/test.db'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://dpxdt:password@dpxdt_db/dpxdt'
 
 # Always set to None or else Flask will return 404s unless the inbound
 # request perfectly matches this variable (including the port number).
