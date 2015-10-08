@@ -24,4 +24,5 @@ RUN pip install -e /usr/local/dpxdt/
 RUN pip install pymysql
 
 EXPOSE 5000
-ENTRYPOINT ["/usr/local/dpxdt/run_combined.sh"]
+#ENTRYPOINT ["/usr/local/dpxdt/run_combined.sh"]
+ENTRYPOINT ["/usr/local/dpxdt/helper.sh"]
