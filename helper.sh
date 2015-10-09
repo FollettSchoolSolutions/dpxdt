@@ -13,14 +13,25 @@ elif [ "$1" = 'start' ]; then
    virtualenv .
    ./run.sh
    #exec ./run_combined.sh $@ 
+elif [ "$1" = 'start_db_exists' ]; then
+   make mysql_exists_deploy
+   cd mysql_deploy
+   virtualenv .
+   ./run.sh
 elif [ "$1" = 'start_sqlite' ]; then
    make sqlite_deploy
    cd sqlite_deploy
    virtualenv .
    ./run.sh
 else 
-   echo Additional options: start, capture
-   echo When start is used, you may optionally add these --ignore_auth, --verbose_workers=true, --verbose_queries=true
+   echo Additional options: start, capture, start_db_exists, start_sqlite
    echo If capture, then you will need to mount a folder to the /usr/dpxdt/capture directory, as follows:
    echo docker run -v /home/asg/depictedChanges/capture:/usr/local/dpxdt/capture fss/dpxdt capture
+   echo 
+   echo start is the option to use if you are starting from scratch with an empty mysql instance.  The container will expect you to have
+   echo have a linked mysql container named dpxdt_db with an empty db named dpxdt and a user named dpxdt with password of 'password'.
+   echo start_db_exists is for starting an instance with a pre-existing MySql database -- no changes will be made to the database
+   echo on startup.
+   echo start_sqlite will start a self contained clean instance of dpxdt, and all storage will remain with the container
+   
 fi

@@ -16,6 +16,7 @@
 """Bootstraps a new installation by setting up the production environment."""
 
 import os
+import argparse
 os.environ['YOURAPPLICATION_SETTINGS'] = '../../settings.cfg'
 os.environ['SQLITE_PRODUCTION'] = 'Yes'
 
@@ -23,23 +24,30 @@ from dpxdt.server import db
 from dpxdt.server import models
 from dpxdt.server import utils
 
-db.create_all()
+parser = argparse.ArgumentParser(description="Configure startup behaviour")
+parser.add_argument('-d','--dbexists', help='does db exist already',required=False)
+args = parser.parse_args()
+print "Argument --dbexists=%s" % args.dbexists
 
-build = models.Build(name='Primary build')
-db.session.add(build)
-db.session.commit()
+#See if we need to initialize the database
+if args.dbexists == "false" or args.dbexists == None:
+    db.create_all()
 
-api_key = models.ApiKey(
-    id=utils.human_uuid(),
-    secret=utils.password_uuid(),
-    purpose='Local workers',
-    superuser=True,
-    build_id=build.id)
-db.session.add(api_key)
-db.session.commit()
+    build = models.Build(name='Primary build')
+    db.session.add(build)
+    db.session.commit()
 
-db.session.flush()
+    api_key = models.ApiKey(
+        id=utils.human_uuid(),
+        secret=utils.password_uuid(),
+        purpose='Local workers',
+        superuser=True,
+        build_id=build.id)
+    db.session.add(api_key)
+    db.session.commit()
 
-with open('flags.cfg', 'a') as f:
-    f.write('--release_client_id=%s\n' % api_key.id)
-    f.write('--release_client_secret=%s\n' % api_key.secret)
+    db.session.flush()
+
+    with open('flags.cfg', 'a') as f:
+        f.write('--release_client_id=%s\n' % api_key.id)
+        f.write('--release_client_secret=%s\n' % api_key.secret)
