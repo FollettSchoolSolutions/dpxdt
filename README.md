@@ -5,15 +5,15 @@ Make continuous deployment safe by comparing before and after webpage screenshot
 To run the dockerized container, you'll need to start 2 containers, a MySql container and the Dpxdt container
 - Start the MySql container
     - docker run --name dpxdt_db -v /usr/dpxdt_data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=dpxdt -e MYSQL_USER=dpxdt -e MYSQL_PASSWORD=password -d mysql:5.7.7
-- Create all the tables that Dpxdt needs
-    - docker run --name dpxdt_oneoff --rm --link dpxdt_db:dpxdt_db --entrypoint /usr/local/dpxdt/db/initdb.sh fss/dpxdt
+This will cause MySql to store data in your current directory/dpxdt_data.  If you stop the MySql container and start a new one that is pointing to an already existing data directory, 
+the environment flags will just be ignored and existing data will be used for the container.
+
 - Start Dpxdt on port 5000
     - docker run -d --link dpxdt_db:dpxdt_db -p 5000:5000 fss/dpxdt start
 - Open MySql client shell into exising db:
     - docker run -it --link dpxdt_db:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
-
-This will cause MySql to store data in your current directory/dpxdt_data.  If you stop the MySql container and start a new one that is pointing to an already existing data directory, 
-the environment flags will just be ignored and existing data will be used for the container.
+- Start a run against a test file
+    - docker run -v /localdir/testdir:/usr/local/dpxdt/capture fss/dpxdt capture
 
 ## Build docker container
 - From the source directory, run: docker build -t fss/dpxdt .
