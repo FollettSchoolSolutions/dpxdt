@@ -16,13 +16,10 @@ COPY phantomjs /usr/bin/phantomjs
 RUN chmod 755 /usr/bin/phantomjs
 COPY . /usr/local/dpxdt/
 
-WORKDIR /usr/local/dpxdt
-RUN ["virtualenv", "/usr/local/dpxdt/"]
-RUN ["/bin/bash", "-c", "source /usr/local/dpxdt/bin/activate"]
-RUN pip install -r /usr/local/dpxdt/requirements.txt
-RUN pip install -e /usr/local/dpxdt/
-RUN pip install pymysql
+WORKDIR /usr/local/dpxdt/deployment
+
+#Make sure dependencies are downloaded ahead of time and stored in the image
+RUN pip install -r sqlite/requirements.txt
 
 EXPOSE 5000
-#ENTRYPOINT ["/usr/local/dpxdt/run_combined.sh"]
 ENTRYPOINT ["/usr/local/dpxdt/helper.sh"]
