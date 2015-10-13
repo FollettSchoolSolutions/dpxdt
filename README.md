@@ -10,6 +10,9 @@ the environment flags will just be ignored and existing data will be used for th
 
 - Start Dpxdt on port 5000
     - docker run -d --link dpxdt_db:dpxdt_db -p 5000:5000 fss/dpxdt start
+- Capture a test run
+    - docker run -v /myfolder/with/tests:/usr/local/dpxdt/capture fss/dpxdt capture testfilename
+    - You should have a testfilename.properties and testfilename.json in the local directory
 - Open MySql client shell into exising db:
     - docker run -it --link dpxdt_db:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'
 - Start a run against a test file

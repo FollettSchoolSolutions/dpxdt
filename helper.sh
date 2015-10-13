@@ -1,6 +1,16 @@
 #!/bin/bash
 if [ "$1" = 'capture' ]; then
-      
+  # Make sure 2nd argument exists
+  if [ ! -z "$2" ]; then
+     cd /usr/local/dpxdt
+     pip install -e .
+     source capture/"$2".properties
+   
+     exec ./dpxdt/tools/fss_diff_url.py --upload_build_id=$upload_build_id --release_server_prefix=$release_server_prefix --release_client_id=$release_client_id --release_client_secret=$release_client_secret --release_cut_url=$release_cut_url --tests_json_path="/usr/local/dpxdt/capture/$2.json" --upload_release_name=$upload_release_name
+
+  else
+    echo "You must supply the name of the properties file after the 'capture' parameter, i.e., for 'mytest.properties', specify 'mytest'"
+  fi      
    cd /usr/local/dpxdt
    pip install -e .
    source capture/test.properties
