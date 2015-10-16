@@ -34,7 +34,7 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 SESSION_COOKIE_DOMAIN = None
 
 # Google OAuth2 login config for local development.
-GOOGLE_OAUTH2_REDIRECT_URI = 'http://localhost:5000/oauth2callback'
+GOOGLE_OAUTH2_REDIRECT_URI = 'http://<HOST>:<PORT>/oauth2callback'
 
 GOOGLE_OAUTH2_CLIENT_ID = (
     '918724168220-nqq27o7so1p7stukds23oo2vof5gkfmh.apps.googleusercontent.com')

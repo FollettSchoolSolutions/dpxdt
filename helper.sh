@@ -1,5 +1,29 @@
 #!/bin/bash
 run_results="/usr/local/dpxdt/capture/runresults.txt"
+deploypath="/usr/local/dpxdt/deployment"
+configure_hostname() {
+   #Allow 2nd parameter and 3rd to specify the hostname & port, e.g., localhost 5000, 172.x.x.x 3000, myhost 6000, etc
+  if [ ! -z "$2" ]; then
+    hostname=$2
+  else
+    hostname=localhost
+  fi
+  if [ ! -z "$3" ]; then
+    port=$3
+  else
+    port=5000
+  fi
+  sed -i "s/<HOST>/${hostname}/g" $deploypath/mysql/flags.cfg
+  sed -i "s/<PORT>/${port}/g"     $deploypath/mysql/flags.cfg
+
+  sed -i "s/<HOST>/${hostname}/g" $deploypath/sqlite/flags.cfg
+  sed -i "s/<PORT>/${port}/g"     $deploypath/sqlite/flags.cfg
+
+  #Dpxdt is a linked directory, we only have to update this once and all deployments will get the value
+  sed -i "s/<HOST>/$hostname/g"     $deploypath/mysql/dpxdt/server/config.py 
+  sed -i "s/<PORT>/$port/g"         $deploypath/mysql/dpxdt/server/config.py 
+
+}
 if [ "$1" = 'capture' ]; then
   # Make sure 2nd argument exists
   if [ ! -z "$2" ]; then
@@ -17,6 +41,7 @@ if [ "$1" = 'capture' ]; then
     echo "You must supply the name of the properties file after the 'capture' parameter, i.e., for 'mytest.properties', specify 'mytest'"
   fi      
 elif [ "$1" = 'start' ]; then
+   configure_hostname $@ 
    make mysql_deploy
    cd mysql_deploy
    virtualenv .
@@ -28,6 +53,7 @@ elif [ "$1" = 'start_db_exists' ]; then
    virtualenv .
    ./run.sh
 elif [ "$1" = 'start_sqlite' ]; then
+   configure_hostname $@ 
    make sqlite_deploy
    cd sqlite_deploy
    virtualenv .
@@ -39,6 +65,7 @@ else
    echo 
    echo start is the option to use if you are starting from scratch with an empty mysql instance.  The container will expect you to have
    echo have a linked mysql container named dpxdt_db with an empty db named dpxdt and a user named dpxdt with password of 'password'.
+   echo You may also pass in host and port, e.g., start 172.x.x.x 5000 
    echo start_db_exists is for starting an instance with a pre-existing MySql database -- no changes will be made to the database
    echo on startup.
    echo start_sqlite will start a self contained clean instance of dpxdt, and all storage will remain with the container
